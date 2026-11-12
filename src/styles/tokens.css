@@ -1,0 +1,70 @@
+:root {
+  color-scheme: light;
+
+  /* Brand greens, pulled from the Prognova Health mark */
+  --forest-950: #03221c;
+  --forest-900: #053f35;
+  --forest-800: #0a4d41;
+  --forest-700: #135f50;
+  --forest-600: #1f7260;
+  --sage-700: #5b7650;
+  --sage-500: #879d78;
+  --sage-300: #b7c7ab;
+  --sage-100: #e8efe4;
+  --lime-500: #b5d34f;
+  --lime-400: #c9e27a;
+  --lime-200: #e6f2bd;
+
+  /* Neutrals */
+  --paper: #f4f6f2;
+  --paper-2: #eaf0e8;
+  --paper-3: #dde5df;
+  --ink: #0b1f1a;
+  --ink-2: #2e4a43;
+  --muted: #5f7570;
+  --line: rgba(5, 63, 53, 0.14);
+  --line-strong: rgba(5, 63, 53, 0.28);
+
+  /* On dark */
+  --on-dark: #eef3ee;
+  --on-dark-2: #b9c9be;
+  --on-dark-3: #7f978d;
+  --line-dark: rgba(238, 243, 238, 0.12);
+  --line-dark-strong: rgba(238, 243, 238, 0.24);
+
+  /* Semantic */
+  --bg: var(--paper);
+  --fg: var(--ink);
+  --fg-2: var(--ink-2);
+  --accent: var(--forest-900);
+  --accent-hi: var(--lime-400);
+
+  /* Type */
+  --font-display: "Bricolage Grotesque Variable", "Manrope Variable", system-ui, sans-serif;
+  --font-body: "Manrope Variable", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, Menlo, monospace;
+
+  --step-giant: clamp(3.2rem, 1.6rem + 7vw, 8.4rem);
+  --step-hero: clamp(2.8rem, 1.4rem + 5.2vw, 6.4rem);
+  --step-h2: clamp(2.1rem, 1.3rem + 2.8vw, 4rem);
+  --step-h3: clamp(1.35rem, 1.15rem + 0.8vw, 1.9rem);
+  --step-lead: clamp(1.1rem, 1rem + 0.45vw, 1.35rem);
+  --step-body: 1.0625rem;
+  --step-small: 0.9rem;
+  --step-mono: 0.74rem;
+
+  /* Space and shape */
+  --gutter: clamp(20px, 4vw, 64px);
+  --content-max: 1360px;
+  --measure: 60ch;
+  --r-card: 20px;
+  --r-pill: 999px;
+  --r-ctl: 12px;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-fluid: cubic-bezier(0.22, 1, 0.36, 1);
+  --t-micro: 0.18s;
+  --t-ui: 0.32s;
+
+  --header-h: 72px;
+}
