@@ -10,6 +10,12 @@ https://www.prognova.ai/. All of its copy, data tables and global strings are al
 `CONTENT-INVENTORY.md`; start there, do not re-scrape the live site. The "Eighteen months, three
 gates" plan section is to be restored (it is in the inventory but not on the live page).
 
+Behind the page sits a fixed Three.js "sky" (`src/components/three/Brain.tsx`): a point-cloud brain
+from `public/brain.bin` that fills the hero's right half, takes a stream of small glyphs, ripples under
+the pointer, and over the last stretch of the hero scroll gathers, flashes and bursts into stars that
+settle into one star above the contact band. The hero, the "Ask in plain words" chat section and the
+contact band are transparent so the sky shows through; every other section paints its own ground.
+
 The previous attempt lives in `D:\NAMAN\Website` (sibling folder, Vite + React, teal palette). It is
 reference only; do not edit it.
 

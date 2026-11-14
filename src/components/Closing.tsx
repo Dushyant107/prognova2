@@ -1,45 +1,33 @@
-import { Suspense } from "react"
-import { closing, footer, site } from "../content"
+import { contact, footer, site } from "../content"
 import { Button } from "./Button"
 import { Reveal } from "./Reveal"
 import { Wordmark } from "./Mark"
-import { LazyEmblem } from "./three/lazy"
 import { scrollTo } from "../lib/scroll"
 
 export function Closing() {
   return (
     <section className="section section--dark closing" id="raising">
-      <div className="closing__canvas">
-        <Suspense fallback={null}>
-          <LazyEmblem spin={0} scale={1.4} position={[0, -0.1, 0]} />
-        </Suspense>
-      </div>
       <div className="wrap closing__inner">
+        {/* the stars born from the nova settle into one star here */}
+        <div className="closing__star" data-anchor="star" aria-hidden="true" />
         <Reveal>
-          <span className="eyebrow">{closing.eyebrow}</span>
+          <span className="eyebrow">{contact.eyebrow}</span>
         </Reveal>
-        <h2 className="closing__title display">
-          {closing.title.map((l, i) => (
-            <Reveal key={l} as="span" delay={0.08 * i} className="closing__row">
-              {l}
-            </Reveal>
-          ))}
-        </h2>
-        <Reveal delay={0.2}>
-          <p className="lead closing__text">{closing.text}</p>
+        <Reveal delay={0.05}>
+          <h2 className="closing__title display" id="contact-title">
+            {contact.titleA} <em>{contact.titleB}</em>
+          </h2>
         </Reveal>
-        <Reveal delay={0.3} className="closing__ctas">
-          <Button href={site.chat} variant="lime" external>
-            {closing.cta}
-          </Button>
-          <Button href={`mailto:${site.email}`} variant="ghost" arrow={false}>
-            {closing.ctaSecondary}
-          </Button>
+        <Reveal delay={0.15}>
+          <p className="lead closing__text">{contact.text}</p>
         </Reveal>
-        <Reveal delay={0.35}>
-          <a className="closing__email display" href={`mailto:${site.email}`}>
+        <Reveal delay={0.25} className="closing__ctas">
+          <Button href={`mailto:${site.email}`} variant="lime" arrow={false}>
             {site.email}
-          </a>
+          </Button>
+          <Button href={site.chat} variant="ghost" external>
+            {contact.cta}
+          </Button>
         </Reveal>
       </div>
 

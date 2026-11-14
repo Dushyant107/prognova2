@@ -45,6 +45,46 @@ export const hero = {
   stack: ["MedGemma 1.5", "4B parameters", "QLoRA fine-tune", "Runs on-premise"],
 }
 
+export const chapters = [
+  {
+    n: "01",
+    tag: "Past",
+    titleA: "Every report,",
+    titleB: "gathered.",
+    text: "Labs, scans and notes from any hospital flow into one patient timeline.",
+    chips: [
+      { label: "Blood panel", left: "0%", top: "8%", delay: "0s" },
+      { label: "MRI", left: "62%", top: "2%", delay: "-2s" },
+      { label: "ECG", left: "76%", top: "40%", delay: "-4s" },
+      { label: "Discharge summary", left: "54%", top: "88%", delay: "-1s" },
+      { label: "Pathology", left: "4%", top: "84%", delay: "-5s" },
+      { label: "Prescription", left: "-4%", top: "46%", delay: "-3s" },
+    ],
+  },
+  {
+    n: "02",
+    tag: "Present",
+    titleA: "Read as",
+    titleB: "one.",
+    text: "The model reads them together, the way a doctor would, and connects what changed.",
+  },
+  {
+    n: "03",
+    tag: "Future",
+    titleA: "What comes",
+    titleB: "next.",
+    text: "A grounded view of likely next steps, each point traced back to its source.",
+  },
+]
+
+export const nameOrigin = {
+  a: "Prog",
+  aNote: { pre: "from ", em: "prognosis", post: " — knowing beforehand" },
+  b: "nova",
+  bNote: "a new star, suddenly bright",
+  tagline: "A new light on what comes next — for every patient, from every report.",
+}
+
 export const facts = {
   // The pinned statement stack. Each line is one thing the model does today or next.
   lines: [
@@ -432,12 +472,30 @@ export const risks = {
   ],
 }
 
-export const closing = {
+export const chat = {
+  eyebrow: "Ask Prognova",
+  titleA: "Ask in plain",
+  titleB: "words.",
+  text: "Every answer points to the exact report it came from.",
+  question: "Summarise this patient's last three reports and flag anything that changed.",
+  // Fictional example. Not a real patient.
+  answer: [
+    "Two things changed across the three reports. Haemoglobin fell from 13.1 to 10.9 g/dL between the March and June blood panels (blood panel, line 4).",
+    "The June imaging note records an 8 mm nodule in the right lower lobe that is not mentioned in March (imaging note, line 7). The discharge summary lists no change to medication.",
+  ],
+  sources: ["Blood panel", "Imaging note", "Discharge summary"],
+  fictional: "Fictional example. Not a real patient.",
+  label: "Ask Prognova",
+  placeholder: "What should I watch for next?",
+  send: "Send question",
+}
+
+export const contact = {
   eyebrow: "Contact",
-  title: ["Clinical AI will be judged", "on what it can prove,", "not what it can say."],
+  titleA: "Bring Prognova to your",
+  titleB: "hospital.",
   text: "First paid pilots are planned for 2027. If you run a hospital, a lab, or a device line, we would like to read your records with you.",
   cta: "Try Prognova AI",
-  ctaSecondary: "Write to us",
 }
 
 export const footer = {

@@ -248,18 +248,22 @@
   color: var(--on-dark-2);
 }
 
-.hero__title {
+/* the box carries the placement; the heading inside is what the entrance moves */
+.hero__titlebox {
   position: absolute;
   left: var(--gutter);
   top: 50%;
   transform: translateY(-56%);
   width: min(58%, 820px);
   z-index: 2;
+  pointer-events: none;
+}
+
+.hero__title {
   display: grid;
   align-items: center;
   text-align: left;
   font-size: clamp(2.8rem, 1rem + 6vw, 7.2rem);
-  pointer-events: none;
 }
 
 .hero__line {
@@ -432,11 +436,13 @@
   .hero {
     height: 300vh;
   }
-  .hero__title {
-    font-size: clamp(2.6rem, 11vw, 5rem);
+  .hero__titlebox {
     top: calc(var(--header-h) + 56px);
     transform: none;
     width: calc(100% - 2 * var(--gutter));
+  }
+  .hero__title {
+    font-size: clamp(2.6rem, 11vw, 5rem);
   }
   .hero__corner--br {
     display: none;
@@ -1903,6 +1909,7 @@
     min-height: 100vh;
   }
   .hero__canvas,
+  .hero__title,
   .hero__eyebrow,
   .hero__corner,
   .hero__hint {
@@ -1959,4 +1966,421 @@
   .plan__gate {
     background-size: 100% 100%;
   }
+}
+
+/* ───────────────────────── Sky (fixed brain canvas) ───────────────────────── */
+.sky {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(34% 44% at 74% 50%, rgba(31, 114, 96, 0.6), transparent 70%),
+    radial-gradient(22% 30% at 80% 38%, rgba(201, 226, 122, 0.14), transparent 70%),
+    var(--forest-950);
+}
+
+main {
+  position: relative;
+  z-index: 1;
+}
+
+/* the hero and the contact band let the sky show through */
+.hero {
+  background: transparent;
+}
+
+.hero__sticky::before {
+  content: none;
+}
+
+.hero__canvas {
+  inset: 0 0 0 50%;
+  opacity: 1;
+}
+
+.closing {
+  background: transparent;
+}
+
+.closing::before {
+  content: none;
+}
+
+.closing__inner {
+  justify-items: center;
+  text-align: center;
+  padding-top: 4vh;
+}
+
+.closing__star {
+  width: 220px;
+  height: 260px;
+}
+
+.closing__title {
+  max-width: 16ch;
+}
+
+.closing__title em {
+  font-style: normal;
+  color: var(--lime-400);
+}
+
+.closing__text {
+  max-width: 52ch;
+}
+
+.closing__ctas {
+  justify-content: center;
+}
+
+@media (max-width: 900px) {
+  .hero__canvas {
+    inset: 26% 0 auto 0;
+    height: 40%;
+  }
+  .closing__star {
+    height: 200px;
+  }
+}
+
+/* ───────────────────────── Chat ───────────────────────── */
+.chat {
+  background: transparent;
+}
+
+.chat__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(32px, 6vw, 80px);
+  align-items: center;
+}
+
+.chat__text {
+  flex: 1 1 320px;
+  display: grid;
+  gap: 20px;
+  align-content: start;
+}
+
+.chat__card {
+  flex: 999 1 480px;
+  min-width: 0;
+  border-radius: 28px;
+  padding: clamp(20px, 3vw, 36px);
+  background: rgba(5, 63, 53, 0.45);
+  box-shadow: inset 0 0 0 1px var(--line-dark);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.chat__thread {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.chat__q {
+  align-self: flex-end;
+  max-width: 80%;
+  padding: 14px 18px;
+  border-radius: 20px 20px 6px 20px;
+  background: var(--paper);
+  color: var(--forest-950);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.chat__a {
+  max-width: 88%;
+  padding: 18px 20px;
+  border-radius: 20px 20px 20px 6px;
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: inset 0 0 0 1px var(--line-dark);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.chat__who {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.chat__a p {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--on-dark);
+}
+
+.chat__sources {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chat__fictional {
+  color: var(--on-dark-3);
+  font-size: var(--step-small);
+}
+
+.chat__form {
+  display: grid;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.chat__form label {
+  color: var(--on-dark-3);
+}
+
+.chat__field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 6px 6px 18px;
+  border-radius: var(--r-pill);
+  background: rgba(3, 34, 28, 0.6);
+  box-shadow: inset 0 0 0 1px var(--line-dark-strong);
+}
+
+.chat__field input {
+  flex: 1;
+  min-width: 0;
+  height: 40px;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--on-dark);
+  font: 0.95rem var(--font-body);
+}
+
+.chat__field input::placeholder {
+  color: var(--on-dark-3);
+}
+
+.chat__send {
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border-radius: var(--r-pill);
+  background: var(--lime-400);
+  color: var(--forest-950);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--t-ui) var(--ease-out), background var(--t-ui);
+}
+
+.chat__send:hover {
+  background: var(--lime-200);
+  transform: translateY(-1px);
+}
+
+/* ───────────────────────── How it reads (chapters) ───────────────────────── */
+.how,
+.name {
+  background: transparent;
+}
+
+.how {
+  padding-block: 0;
+}
+
+.chapter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 40px;
+  min-height: 760px;
+  padding: 80px 0;
+}
+
+.chapter--flip {
+  flex-direction: row-reverse;
+}
+
+.chapter__text {
+  flex: 1 1 340px;
+  display: grid;
+  gap: 20px;
+  align-content: center;
+}
+
+.chapter__text .lead {
+  max-width: 40ch;
+}
+
+.chapter__stage {
+  position: relative;
+  flex: 1 1 420px;
+  height: 520px;
+}
+
+/* The tags wait until the brain has settled into the chapter, then rise in one after another.
+   The float runs on the translate property so it never fights the reveal transform. */
+.chapter__chip {
+  position: absolute;
+  background: rgba(5, 63, 53, 0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: var(--on-dark);
+  animation: chip-float 7s ease-in-out infinite;
+  opacity: 0;
+  transform: translateY(14px) scale(0.94);
+  transition:
+    opacity 0.35s ease,
+    transform 0.35s ease;
+  transition-delay: calc(var(--i, 0) * 30ms);
+}
+
+.chapter__stage.is-here .chapter__chip {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.7s var(--ease-out),
+    transform 0.9s var(--ease-out);
+  transition-delay: calc(120ms + var(--i, 0) * 90ms);
+}
+
+@keyframes chip-float {
+  0%,
+  100% {
+    translate: 0 -7px;
+  }
+  50% {
+    translate: 0 7px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chapter__chip {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.chapter--centre {
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 20px;
+  min-height: 0;
+  padding: 80px 0 0;
+}
+
+.chapter__eyebrow--lime {
+  color: var(--lime-400);
+}
+
+.chapter__title--big {
+  font-size: clamp(2.6rem, 1rem + 6.4vw, 7.4rem);
+}
+
+.chapter--centre .lead {
+  max-width: 46ch;
+}
+
+.chapter__stage--wide {
+  flex: none;
+  width: 100%;
+  height: 560px;
+}
+
+/* ───────────────────────── Name ───────────────────────── */
+.name__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: clamp(16px, 4vw, 56px);
+  text-align: center;
+}
+
+.name__part {
+  display: grid;
+  gap: 12px;
+  flex: 1 1 260px;
+  max-width: 400px;
+  justify-items: center;
+}
+
+.name__word {
+  font-size: clamp(4.4rem, 1rem + 10vw, 9.5rem);
+  line-height: 1;
+}
+
+.name__word em,
+.name__plus {
+  font-style: normal;
+  color: var(--lime-400);
+}
+
+.name__note {
+  color: var(--on-dark-2);
+  font-size: var(--step-small);
+}
+
+.name__note em {
+  font-style: italic;
+}
+
+.name__plus {
+  font-size: clamp(2.6rem, 1rem + 5vw, 5.5rem);
+}
+
+.name__tagline {
+  margin: 96px auto 0;
+  max-width: 24ch;
+  text-align: center;
+  font-size: clamp(1.8rem, 1rem + 3vw, 3.4rem);
+  line-height: 1.12;
+  color: var(--on-dark);
+}
+
+@media (max-width: 720px) {
+  .chapter {
+    min-height: 0;
+    padding: 56px 0;
+  }
+  .chapter__stage {
+    height: 420px;
+  }
+  .chapter__stage--wide {
+    height: 440px;
+  }
+  .name__tagline {
+    margin-top: 64px;
+  }
+}
+
+/* the sky settles into the statement stack's ground before the next section begins */
+.name {
+  padding-bottom: clamp(260px, 38vh, 440px);
+}
+
+.name::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: clamp(360px, 58vh, 640px);
+  background: linear-gradient(to bottom, rgba(3, 34, 28, 0) 0%, rgba(3, 34, 28, 0.6) 55%, var(--forest-950) 100%);
+  pointer-events: none;
+}
+
+.name > .wrap {
+  position: relative;
+  z-index: 1;
+}
+
+.chapter__head {
+  display: grid;
+  gap: 20px;
+  justify-items: center;
 }

@@ -10,7 +10,8 @@ export function Preloader({ onDone }: { onDone: () => void }) {
   const [show, setShow] = useState(true)
 
   useEffect(() => {
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    // Dev helper: /?y=<px> screenshots skip the count so the page lands at once.
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches || new URLSearchParams(location.search).has("y")
     lockScroll(true)
     if (reduced) {
       setN(100)

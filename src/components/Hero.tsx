@@ -1,60 +1,94 @@
-import { Suspense, useEffect, useRef, useState } from "react"
+import { useEffect, useRef } from "react"
 import { hero, site } from "../content"
 import { gsap, useGSAP, ScrollTrigger, MOTION_OK } from "../lib/gsap"
 import { Chars } from "../lib/split"
 import { Button } from "./Button"
-import type { Progress } from "./three/Emblem"
-import { LazyEmblem } from "./three/lazy"
 import { scrollTo } from "../lib/scroll"
-
-function useNarrow() {
-  const [narrow, setNarrow] = useState(() => (typeof window === "undefined" ? false : window.innerWidth < 900))
-  useEffect(() => {
-    const mq = window.matchMedia("(max-width: 900px)")
-    const on = () => setNarrow(mq.matches)
-    mq.addEventListener("change", on)
-    return () => mq.removeEventListener("change", on)
-  }, [])
-  return narrow
-}
 
 export function Hero({ ready }: { ready: boolean }) {
   const root = useRef<HTMLElement>(null)
-  const progress = useRef<Progress>({ current: 0 }).current
-  const narrow = useNarrow()
 
-  // Scroll: the headline cycles with a letter blur, the emblem turns, the hint fades.
+  // Scroll: the headline shows one line at a time. Every scroll position maps to one exact
+  // state of the letters, computed fresh each frame, so nothing can be left half-faded by a
+  // re-render, a hot update or a jump. Lines leave fully before the next arrives.
   useGSAP(
     () => {
       const mm = gsap.matchMedia()
       mm.add(MOTION_OK, () => {
         const lines = gsap.utils.toArray<HTMLElement>(".hero__line")
+        const chars = lines.map((l) => Array.from(l.querySelectorAll<HTMLElement>(".ch")))
+        const hint = root.current?.querySelector<HTMLElement>(".hero__hint")
+        const dots = root.current?.querySelectorAll<HTMLElement>(".hero__dot")
         const n = lines.length
-        lines.forEach((l, i) => i > 0 && gsap.set(l.querySelectorAll(".ch"), { opacity: 0, y: 22, filter: "blur(10px)" }))
+        const IN = 0.16 // share of a line's segment spent arriving
+        const OUT = 0.8 // point in the segment where a line starts to leave
+        const STAG = 0.004 // per-letter shift
+        const smooth = (k: number) => {
+          k = k < 0 ? 0 : k > 1 ? 1 : k
+          return k * k * (3 - 2 * k)
+        }
 
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: root.current,
-            start: "top top",
-            end: "bottom bottom",
-            scrub: 0.7,
-            onUpdate: (self) => {
-              progress.current = self.progress
-              const dots = root.current?.querySelectorAll<HTMLElement>(".hero__dot")
-              const active = Math.min(n - 1, Math.floor(self.progress * n))
-              dots?.forEach((d, i) => d.classList.toggle("is-on", i === active))
-            },
+        const render = (p: number) => {
+          const t = p * n
+          for (let i = 0; i < n; i++) {
+            const local = t - i
+            const cs = chars[i]
+            for (let j = 0; j < cs.length; j++) {
+              const sh = j * STAG
+              const aIn = i === 0 ? 1 : smooth((local - sh) / IN)
+              const aOut = i === n - 1 ? 0 : smooth((local - OUT - sh) / (1 - OUT))
+              const vis = aIn * (1 - aOut)
+              const y = (1 - aIn) * 22 - aOut * 22
+              const st = cs[j].style
+              st.opacity = String(vis)
+              st.transform = `translateY(${y.toFixed(2)}px)`
+              st.filter = vis >= 0.999 ? "none" : `blur(${((1 - vis) * 10).toFixed(2)}px)`
+            }
+          }
+          if (hint) {
+            const h = 1 - smooth(p / 0.08)
+            hint.style.opacity = String(h)
+            hint.style.transform = `translateY(${(-10 * (1 - h)).toFixed(2)}px)`
+          }
+          const active = Math.min(n - 1, Math.floor(p * n))
+          dots?.forEach((d, i) => d.classList.toggle("is-on", i === active))
+        }
+
+        // a little smoothing of our own, in place of a scrubbed timeline
+        let target = 0
+        let cur = -1
+        const tick = () => {
+          if (cur < 0) cur = target
+          const d = target - cur
+          if (Math.abs(d) < 0.0004) {
+            if (cur !== target) {
+              cur = target
+              render(cur)
+            }
+            return
+          }
+          cur += d * 0.14
+          render(cur)
+        }
+        const st = ScrollTrigger.create({
+          trigger: root.current,
+          start: "top top",
+          end: "bottom bottom",
+          onUpdate: (self) => {
+            target = self.progress
+          },
+          onRefresh: (self) => {
+            target = self.progress
+            cur = target
+            render(cur)
           },
         })
-        tl.to(".hero__hint", { opacity: 0, y: -10, duration: 0.3 }, 0)
-        for (let i = 1; i < n; i++) {
-          const out = lines[i - 1].querySelectorAll(".ch")
-          const inn = lines[i].querySelectorAll(".ch")
-          const at = i - 0.55
-          tl.to(out, { opacity: 0, y: -22, filter: "blur(10px)", stagger: 0.012, duration: 0.45, ease: "power2.in" }, at)
-          tl.to(inn, { opacity: 1, y: 0, filter: "blur(0px)", stagger: 0.012, duration: 0.5, ease: "power2.out" }, at + 0.25)
+        render(st.progress)
+        gsap.ticker.add(tick)
+        return () => {
+          gsap.ticker.remove(tick)
+          st.kill()
         }
-        tl.to({}, { duration: 0.2 })
       })
       return () => mm.revert()
     },
@@ -66,15 +100,23 @@ export function Hero({ ready }: { ready: boolean }) {
     if (!ready || !root.current) return
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
     const el = root.current
-    const first = el.querySelectorAll(".hero__line:first-child .ch")
+    // The letters belong to the scroll timeline alone; the entrance moves the title as a block,
+    // so replaying it part-way down the page can never leave letters half-faded.
+    const title = el.querySelector(".hero__title")
     if (reduced) {
-      gsap.set([first, ".hero__eyebrow", ".hero__corner", ".hero__hint", ".hero__canvas"], { opacity: 1, clearProps: "all" })
+      gsap.set([title, ".hero__corner", ".hero__hint", ".hero__canvas"], { opacity: 1, clearProps: "all" })
+      return
+    }
+    // Landing part-way down (a deep link, or the dev scroll helper): the scrubbed headline
+    // already owns the letters, so only reveal the furniture.
+    const st = ScrollTrigger.getAll().find((s) => s.trigger === el)
+    if (st && st.progress > 0.02) {
+      gsap.set([title, ".hero__corner", ".hero__hint", ".hero__canvas"], { opacity: 1, y: 0, filter: "none" })
       return
     }
     const tl = gsap.timeline({ defaults: { ease: "power4.out" } })
     tl.fromTo(".hero__canvas", { opacity: 0, scale: 0.86 }, { opacity: 1, scale: 1, duration: 1.6, ease: "expo.out" }, 0)
-      .fromTo(first, { opacity: 0, y: 44, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", stagger: 0.018, duration: 0.9 }, 0.15)
-      .fromTo(".hero__eyebrow", { opacity: 0, y: -10 }, { opacity: 1, y: 0, duration: 0.7 }, 0.4)
+      .fromTo(title, { opacity: 0, y: 44, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 1.1 }, 0.15)
       .fromTo(".hero__corner", { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.9, stagger: 0.1 }, 0.7)
       .fromTo(".hero__hint", { opacity: 0 }, { opacity: 1, duration: 0.6 }, 1.1)
     return () => {
@@ -86,16 +128,10 @@ export function Hero({ ready }: { ready: boolean }) {
   return (
     <section className="hero" id="top" ref={root} aria-labelledby="hero-title">
       <div className="hero__sticky">
-        <div className="hero__canvas">
-          <Suspense fallback={null}>
-            <LazyEmblem progress={progress} scale={narrow ? 0.46 : 0.82} position={narrow ? [0.05, 0.08, 0] : [1.3, -0.05, 0]} />
-          </Suspense>
-        </div>
+        {/* the brain in the sky takes this box as its place */}
+        <div className="hero__canvas" data-anchor="0" aria-hidden="true" />
 
-        <div className="hero__eyebrow">
-          <span className="eyebrow">{hero.eyebrow}</span>
-        </div>
-
+        <div className="hero__titlebox">
         <h1 className="hero__title display" id="hero-title">
           {hero.lines.map((l, i) => (
             <span className="hero__line" key={i} aria-hidden={i > 0}>
@@ -108,6 +144,7 @@ export function Hero({ ready }: { ready: boolean }) {
             </span>
           ))}
         </h1>
+        </div>
 
         <div className="hero__corner hero__corner--bl">
           <p className="hero__lead">{hero.lead}</p>
@@ -125,24 +162,6 @@ export function Hero({ ready }: { ready: boolean }) {
             >
               {hero.ctaSecondary}
             </Button>
-          </div>
-        </div>
-
-        <div className="hero__corner hero__corner--br">
-          <span className="mono hero__label">{hero.cornerLabel}</span>
-          <ul className="hero__stack mono">
-            {hero.stack.map((s) => (
-              <li key={s}>{s}</li>
-            ))}
-          </ul>
-          <div className="ticker" aria-hidden="true">
-            <div className="ticker__track">
-              {[...hero.ticker, ...hero.ticker].map((t, i) => (
-                <span key={i} className="mono">
-                  {t} <i>·</i>
-                </span>
-              ))}
-            </div>
           </div>
         </div>
 

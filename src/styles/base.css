@@ -112,6 +112,7 @@ table {
 .section {
   position: relative;
   padding-block: clamp(96px, 12vw, 180px);
+  background: var(--bg);
 }
 
 .section--dark {

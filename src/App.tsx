@@ -1,10 +1,13 @@
-import { useEffect, useState } from "react"
+import { Suspense, useEffect, useState } from "react"
 import { MotionConfig } from "motion/react"
 import { ScrollTrigger } from "./lib/gsap"
 import { getLenis, startSmoothScroll } from "./lib/scroll"
+import { LazySky } from "./components/three/lazy"
 import { Preloader } from "./components/Preloader"
 import { Header } from "./components/Header"
 import { Hero } from "./components/Hero"
+import { How } from "./components/How"
+import { Name } from "./components/Name"
 import { Facts } from "./components/Facts"
 import { Problem } from "./components/Problem"
 import { AskRecord } from "./components/AskRecord"
@@ -16,6 +19,7 @@ import { Moat } from "./components/Moat"
 import { Plan } from "./components/Plan"
 import { Devices } from "./components/Devices"
 import { Risks } from "./components/Risks"
+import { Chat } from "./components/Chat"
 import { Closing } from "./components/Closing"
 
 export default function App() {
@@ -31,6 +35,8 @@ export default function App() {
 
   useEffect(() => {
     if (!ready) return
+    // the sky starts the brain's entrance once the preloader has left
+    document.documentElement.dataset.ready = "1"
     requestAnimationFrame(() => {
       ScrollTrigger.refresh()
       // Dev helper for headless screenshots: /?y=<px> lands the page at that scroll position.
@@ -49,9 +55,14 @@ export default function App() {
         Skip to content
       </a>
       <Preloader onDone={() => setReady(true)} />
+      <Suspense fallback={null}>
+        <LazySky />
+      </Suspense>
       <Header />
       <main id="main">
         <Hero ready={ready} />
+        <How />
+        <Name />
         <Facts />
         <Problem />
         <AskRecord />
@@ -63,6 +74,7 @@ export default function App() {
         <Plan />
         <Devices />
         <Risks />
+        <Chat />
         <Closing />
       </main>
     </MotionConfig>
